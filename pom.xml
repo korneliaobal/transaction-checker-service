@@ -27,6 +27,11 @@
             <id>confluent</id>
             <url>https://packages.confluent.io/maven/</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/korneliaobal/payment-contracts</url>
+        </repository>
     </repositories>
 
     <dependencies>

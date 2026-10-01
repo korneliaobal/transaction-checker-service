@@ -1,3 +1,3 @@
-com/korneliawolniak/transactionchecker/checker/TransactionChecker.class
 com/korneliawolniak/transactionchecker/TransactionCheckerServiceApplication.class
+com/korneliawolniak/transactionchecker/checker/TransactionChecker.class
 com/korneliawolniak/transactionchecker/kafka/TransactionValidationResultPublisher.class
