@@ -7,19 +7,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class TransactionValidationResultPublisher {
 
-    private static final String TOPIC = "transaction-validation-result";
+  private static final String TOPIC = "transaction-validation-result";
 
-    private final KafkaTemplate<String, TransactionValidationResult> kafkaTemplate;
+  private final KafkaTemplate<String, TransactionValidationResult> kafkaTemplate;
 
-    public TransactionValidationResultPublisher(
-            KafkaTemplate<String, TransactionValidationResult> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
+  public TransactionValidationResultPublisher(
+      KafkaTemplate<String, TransactionValidationResult> kafkaTemplate) {
+    this.kafkaTemplate = kafkaTemplate;
+  }
 
-    public void publish(TransactionValidationResult event) {
-        kafkaTemplate.send(
-                TOPIC,
-                event.getPaymentId().toString(),
-                event);
-    }
+  public void publish(TransactionValidationResult event) {
+    kafkaTemplate.send(TOPIC, event.getPaymentId().toString(), event);
+  }
 }
