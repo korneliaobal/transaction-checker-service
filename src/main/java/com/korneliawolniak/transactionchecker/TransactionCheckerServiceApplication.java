@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TransactionCheckerServiceApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(TransactionCheckerServiceApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(TransactionCheckerServiceApplication.class, args);
+  }
 }
