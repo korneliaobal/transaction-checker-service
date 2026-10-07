@@ -42,3 +42,14 @@ jobs:
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --secret id=maven_settings,src=$HOME/.m2/settings.xml \
+            --secret id=github_actor,env=GITHUB_ACTOR \
+            --secret id=github_token,env=GITHUB_TOKEN \
+            -t transaction-checker-service:ci .
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
