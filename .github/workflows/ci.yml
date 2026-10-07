@@ -28,8 +28,17 @@ jobs:
           server-username-env-var: GITHUB_ACTOR
           server-password-env-var: GITHUB_TOKEN
 
-      - name: Build and test
-        run: mvn clean test
+      - name: Make Maven Wrapper executable
+        run: chmod +x mvnw
+
+      - name: Check formatting
+        run: ./mvnw spotless:check
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run tests
+        run: ./mvnw clean test
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
