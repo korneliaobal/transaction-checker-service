@@ -18,6 +18,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout payment contracts
+        uses: actions/checkout@v4
+        with:
+          repository: korneliaobal/payment-contracts
+          ref: 60e8c1a5611d7b1be01684527837739f2ed68b71
+          path: .ci/payment-contracts
+
       - name: Set up Java
         uses: actions/setup-java@v6
         with:
@@ -37,6 +44,9 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install payment contracts
+        run: ./mvnw -B -ntp -f .ci/payment-contracts/pom.xml clean install
+
       - name: Run tests
         run: ./mvnw clean test
         env:
@@ -45,7 +55,9 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build \
+          docker buildx build --load \
+            --build-arg CONTRACTS_SOURCE=local \
+            --build-context payment-contracts=.ci/payment-contracts \
             --secret id=maven_settings,src=$HOME/.m2/settings.xml \
             --secret id=github_actor,env=GITHUB_ACTOR \
             --secret id=github_token,env=GITHUB_TOKEN \
