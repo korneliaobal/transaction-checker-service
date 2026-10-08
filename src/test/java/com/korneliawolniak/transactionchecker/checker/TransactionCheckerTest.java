@@ -62,7 +62,10 @@ class TransactionCheckerTest {
 
     verify(publisher).publish(captor.capture());
 
-    assertEquals("NOT_OK", captor.getValue().getStatus().toString());
+    assertEquals("NOT_OK", String.valueOf(captor.getValue().getStatus()));
+    assertEquals(
+        java.util.List.of("CREDITOR_NAME_REQUIRED"),
+        captor.getValue().getReasonCodes().stream().map(Object::toString).toList());
   }
 
   @Test
@@ -84,7 +87,10 @@ class TransactionCheckerTest {
 
     verify(publisher).publish(captor.capture());
 
-    assertEquals("NOT_OK", captor.getValue().getStatus().toString());
+    assertEquals("NOT_OK", String.valueOf(captor.getValue().getStatus()));
+    assertEquals(
+        java.util.List.of("CREDITOR_ACCOUNT_INVALID"),
+        captor.getValue().getReasonCodes().stream().map(Object::toString).toList());
   }
 
   @Test
@@ -106,6 +112,29 @@ class TransactionCheckerTest {
 
     verify(publisher).publish(captor.capture());
 
+    assertEquals("NOT_OK", String.valueOf(captor.getValue().getStatus()));
+    assertEquals(
+        java.util.List.of("AMOUNT_BELOW_MINIMUM"),
+        captor.getValue().getReasonCodes().stream().map(Object::toString).toList());
+  }
+
+  @Test
+  void reportsAllViolationsWithoutThrowingOnMalformedAmount() {
+    var request =
+        TransactionValidationRequest.newBuilder()
+            .setPaymentId("payment-1")
+            .setTransactionId("transaction-1")
+            .setCreditorName("")
+            .setCreditorAccountNumber("PL62109010140000071219812874")
+            .setAmount("invalid")
+            .setCurrency("PLN")
+            .build();
+    transactionChecker.handle(request);
+    var captor = ArgumentCaptor.forClass(TransactionValidationResult.class);
+    verify(publisher).publish(captor.capture());
     assertEquals("NOT_OK", captor.getValue().getStatus().toString());
+    assertEquals(
+        java.util.List.of("CREDITOR_NAME_REQUIRED", "CREDITOR_ACCOUNT_INVALID", "AMOUNT_INVALID"),
+        captor.getValue().getReasonCodes().stream().map(Object::toString).toList());
   }
 }
