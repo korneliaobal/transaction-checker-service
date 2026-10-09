@@ -1,0 +1,19 @@
+FROM eclipse-temurin:21-jdk AS build
+WORKDIR /app
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+RUN chmod +x mvnw
+
+ADD https://codeload.github.com/korneliaobal/payment-contracts/tar.gz/60e8c1a5611d7b1be01684527837739f2ed68b71 /tmp/payment-contracts.tar.gz
+RUN mkdir /contracts \
+    && tar -xzf /tmp/payment-contracts.tar.gz -C /contracts --strip-components=1 \
+    && ./mvnw -B -ntp -f /contracts/pom.xml install -DskipTests \
+    && rm /tmp/payment-contracts.tar.gz
+
+COPY src src
+RUN ./mvnw -B -ntp clean package -DskipTests
+
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=build /app/target/transaction-checker-service-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
